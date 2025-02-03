@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WORDSWEPER</title>
+  <!-- Using a standard sans-serif font for clarity -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="main-container">
+    <h1>WORDSWEPER</h1>
+    <div id="game-container">
+      <!-- Timer display inside the game container, centered above the grid -->
+      <div id="timer-display">
+        <strong>Time:</strong> <span id="time-elapsed">0</span> seconds
+      </div>
+      <div id="grid-container">
+        <div id="grid"></div>
+        <!-- Result overlay for win/lose messages -->
+        <div id="result-overlay" style="display: none;">
+          <div id="result-message"></div>
+          <button id="overlay-new-game-button">Start New Game</button>
+        </div>
+        <!-- Start overlay covering grid with default options and walkthrough guide -->
+        <div id="start-overlay">
+          <div id="overlay-default">
+            <button id="how-to-play-button">How to Play</button>
+            <button id="start-button">Start Game</button>
+          </div>
+          <div id="guide-container" style="display: none;">
+            <div id="guide-content">
+              <!-- Walkthrough content will be injected here -->
+            </div>
+            <div id="guide-navigation">
+              <button id="prev-step-button">Previous</button>
+              <button id="next-step-button">Next</button>
+              <button id="guide-start-button" style="display: none;">Start Game</button>
+              <button id="guide-back-button">Back</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="info-panel">
+        <!-- Secret word display (hangman style) -->
+        <div id="secret-word-display">
+          <strong>Secret Word:</strong> <span id="word-hangman">_ _ _ _ _ _</span>
+        </div>
+        <div id="selected-letters">
+          <strong>Selected Letters:</strong> <span id="green-letters"></span>
+        </div>
+        <div id="guesses-remaining">
+          <strong>Guesses Remaining:</strong> <span id="remaining-count">3</span>
+        </div>
+        <div id="wrong-guesses">
+          <strong>Wrong Guesses:</strong> <span id="wrong-list"></span>
+        </div>
+        <div id="guess-area">
+          <input type="text" id="wordGuess" placeholder="Guess the word">
+          <button onclick="checkWord()">Submit Guess</button>
+        </div>
+        <button id="new-game-button">Start New Game</button>
+      </div>
+      <div id="message"></div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
