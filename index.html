@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WORDSWEEPER</title>
+  <title>WORDSWEPER</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="main-container">
-    <h1>WORDSWEEPER</h1>
+    <h1>WORDSWEPER</h1>
     <div id="game-container">
-      <!-- Header controls: Timer on the left and selection instructions on the right -->
+      <!-- Header: Timer left, selection instructions right -->
       <div id="header-controls">
         <div id="timer-display">
           <strong>Time:</strong> <span id="time-elapsed">0</span> seconds
@@ -19,14 +19,14 @@
           <p>Tap/Click = Green | Long Press/Right Click = Red</p>
         </div>
       </div>
-      <!-- Grid container; its size will be set via JS based on difficulty -->
+      <!-- Grid container; its size is set dynamically -->
       <div id="grid-container">
         <div id="grid"></div>
         <!-- Countdown overlay -->
         <div id="countdown-overlay" style="display: none;">
           <div id="countdown-number">3</div>
         </div>
-        <!-- Result overlay for win/lose messages -->
+        <!-- Result overlay -->
         <div id="result-overlay" style="display: none;">
           <div id="result-message"></div>
           <button id="overlay-new-game-button">Start New Game</button>
@@ -39,7 +39,7 @@
           </div>
           <div id="guide-container" style="display: none;">
             <div id="guide-content">
-              <!-- Walkthrough content is injected here -->
+              <!-- Walkthrough content will be injected here -->
             </div>
             <div id="guide-navigation">
               <button id="prev-step-button">Previous</button>
@@ -60,7 +60,7 @@
             <option value="hard">Hard</option>
           </select>
         </div>
-        <!-- Secret word display (hangman-style) -->
+        <!-- Secret word display -->
         <div id="secret-word-display">
           <strong>Secret Word:</strong>
           <span id="word-hangman">_ _ _ _ _</span>
@@ -83,7 +83,7 @@
       <div id="message"></div>
     </div>
   </div>
-  <!-- Countdown sound effect (ensure this file exists) -->
+  <!-- Countdown sound (ensure audio/countdown.mp3 exists) -->
   <audio id="countdown-sound" src="https://github.com/benny3hats/wordsweeper/raw/refs/heads/benny3hats-patch-31/beep%20sound%20effect.m4a"></audio>
   <script src="script.js"></script>
 </body>
