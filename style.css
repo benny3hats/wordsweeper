@@ -36,7 +36,7 @@ h1 {
   margin: 0 auto 20px auto;
 }
 
-/* Header controls */
+/* Header controls: timer left; instructions right */
 #header-controls {
   display: flex;
   justify-content: space-between;
@@ -56,9 +56,7 @@ h1 {
   color: #333;
 }
 
-/* Grid container – its size is set dynamically via JS.
-   On larger screens, it uses the difficulty's containerSize;
-   on mobile, it will adjust to 90vw. */
+/* Grid container – size set dynamically via JS; on mobile, uses 90vw */
 #grid-container {
   position: relative;
   margin: 0 auto 20px auto;
@@ -66,7 +64,8 @@ h1 {
   border: 2px solid #ccc;
   border-radius: 8px;
   padding: 10px;
-  width: 400px; /* Default for Easy */
+  /* Default for desktop (will be overridden on mobile) */
+  width: 400px;
   height: 400px;
 }
 
@@ -223,7 +222,7 @@ h1 {
   font-size: 14px;
 }
 
-/* Guide image – constrain to max 150px width */
+/* Guide image – force maximum width of 150px */
 .guide-image {
   display: block;
   margin: 0 auto 10px auto;
@@ -399,6 +398,15 @@ h1 {
   background-color: #ff8b94;
   color: #333;
   border-color: #ff8b94;
+}
+
+/* Hard mode on mobile: scale down text for legibility */
+.hard-mobile .tile .letter {
+  font-size: 12px;
+}
+
+.hard-mobile .tile .number {
+  font-size: 8px;
 }
 
 /* Mobile responsiveness */
