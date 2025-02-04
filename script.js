@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     guessLimit: 3,
     clueDensityThreshold: 0.4,
     maxRegenerationAttempts: 10,
-    // 20 common six-letter words.
     secretWords: [
       "TABLES", "CHAIRS", "PLANTS", "FRIDGE", "WINDOW",
       "CANDLE", "MARKET", "GARDEN", "FRIEND", "SISTER",
@@ -24,13 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Walkthrough steps for the How To Play guide.
-  // Replace 'yourusername' and 'yourrepository' with your actual GitHub username and repository.
+  // Update the image URLs with your raw GitHub URLs.
   const walkthroughSteps = [
     {
       title: "Welcome to Wordsweeper",
       content: "Your mission is to decipher the grid of letters and guess the secret word hidden within.",
       image: "https://raw.githubusercontent.com/benny3hats/wordsweeper/57327b6f20d89511e222f28050d3052c6b99efb5/Step1.svg"
-
     },
     {
       title: "The Grid & Tiles",
@@ -342,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Show an overlay with win/lose message.
+  // Show an overlay over the grid with win/lose message.
   function showResultOverlay(status, messageText) {
     stopTimer();
     const overlay = document.getElementById("result-overlay");
