@@ -36,7 +36,7 @@ h1 {
   margin: 0 auto 20px auto;
 }
 
-/* Header controls: Timer left, instructions right */
+/* Header controls */
 #header-controls {
   display: flex;
   justify-content: space-between;
@@ -56,7 +56,9 @@ h1 {
   color: #333;
 }
 
-/* Grid container – size set dynamically via JS based on difficulty */
+/* Grid container – its size is set dynamically via JS.
+   On larger screens, it uses the difficulty's containerSize;
+   on mobile, it will adjust to 90vw. */
 #grid-container {
   position: relative;
   margin: 0 auto 20px auto;
@@ -64,7 +66,8 @@ h1 {
   border: 2px solid #ccc;
   border-radius: 8px;
   padding: 10px;
-  /* The container's width and height are set in JS */
+  width: 400px; /* Default for Easy */
+  height: 400px;
 }
 
 /* Grid styling */
@@ -220,7 +223,7 @@ h1 {
   font-size: 14px;
 }
 
-/* Guide image – force maximum width of 150px */
+/* Guide image – constrain to max 150px width */
 .guide-image {
   display: block;
   margin: 0 auto 10px auto;
@@ -351,7 +354,7 @@ h1 {
   color: #333;
 }
 
-/* Tile styling – tiles fill their grid cells and maintain a square aspect ratio */
+/* Tile styling – tiles fill their grid cell and remain square */
 .tile {
   background: #fff;
   border: 2px solid #ccc;
@@ -398,15 +401,15 @@ h1 {
   border-color: #ff8b94;
 }
 
-/* Mobile adjustments */
+/* Mobile responsiveness */
 @media (max-width: 480px) {
   #game-container {
     padding: 10px;
   }
   #grid-container {
-    width: 90%;
-    height: auto;
-    padding: 10px;
+    width: 90vw;
+    height: 90vw;
+    padding: 5px;
   }
   #timer-display, #info-panel {
     font-size: 12px;
