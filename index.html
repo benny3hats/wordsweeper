@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WORDSWEEPER</title>
-  <!-- Using a standard sans-serif font for clarity -->
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WORDSWEEP</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="main-container">
-    <h1>WORDSWEEPER</h1>
+    <h1>WORDSWEEP</h1>
     <div id="game-container">
-      <!-- Timer display inside the game container, centered above the grid -->
+      <!-- Timer display inside game container, centered above the grid -->
       <div id="timer-display">
         <strong>Time:</strong> <span id="time-elapsed">0</span> seconds
       </div>
@@ -56,7 +55,7 @@
           <strong>Wrong Guesses:</strong> <span id="wrong-list"></span>
         </div>
         <div id="guess-area">
-          <input type="text" id="wordGuess" placeholder="Guess the word">
+          <input type="text" id="wordGuess" placeholder="Guess the word" />
           <button onclick="checkWord()">Submit Guess</button>
         </div>
         <button id="new-game-button">Start New Game</button>
