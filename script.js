@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     easy: {
       gridSize: 5,
       wordLength: 5,
-      containerSize: 400, // in pixels
+      containerSize: 400, // ideal size (in pixels) for desktop; will scale on mobile
       secretWords: [
         "WORDS", "GAMES", "PLAYS", "HEROE", "TIMES", "LIFES", "WINDS", "STARS",
         "LOVES", "FIRES", "SOULS", "BIRDS", "TREES", "WAVES", "NOTES", "BOOKS",
@@ -97,15 +97,23 @@ document.addEventListener("DOMContentLoaded", () => {
   let secretWord = "";
   let revealedPositions = [];
 
-  // Pre-load an easy grid on first load.
+  // On first load, pre-load an Easy grid.
   window.addEventListener("load", () => {
     const diffConfig = difficulties["easy"];
-    const gridContainer = document.getElementById("grid-container");
-    gridContainer.style.width = diffConfig.containerSize + "px";
-    gridContainer.style.height = diffConfig.containerSize + "px";
+    setGridContainerSize(diffConfig.containerSize);
     document.getElementById("grid").style.setProperty("--grid-size", diffConfig.gridSize);
     generateGrid(diffConfig.gridSize);
   });
+
+  // Set grid container size responsively.
+  function setGridContainerSize(containerSize) {
+    const gridContainer = document.getElementById("grid-container");
+    // If the viewport is smaller than the ideal containerSize, use 90% of viewport width.
+    const viewportWidth = window.innerWidth;
+    const size = viewportWidth < containerSize ? viewportWidth * 0.9 : containerSize;
+    gridContainer.style.width = size + "px";
+    gridContainer.style.height = size + "px";
+  }
 
   // Difficulty selector event.
   const difficultySelect = document.getElementById("difficulty");
@@ -121,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
       `<strong>Secret Word:</strong> <span id="word-hangman">${"_ ".repeat(diffConfig.wordLength).trim()}</span>`;
   }
 
-  // Check for at least one corner clue (0 or 3) in easy mode.
+  // In Easy mode, ensure at least one corner tile has a clue of 0 or 3.
   function easyCornerClueExists() {
     if (currentDifficulty !== "easy") return true;
     const gridSize = difficulties["easy"].gridSize;
@@ -136,13 +144,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Countdown overlay logic.
   function startCountdown() {
+    const diffConfig = difficulties[currentDifficulty];
+    // Set grid container size responsively.
+    setGridContainerSize(diffConfig.containerSize);
     const countdownOverlay = document.getElementById("countdown-overlay");
     const countdownNumber = document.getElementById("countdown-number");
     countdownOverlay.style.display = "flex";
     let count = 3;
     countdownNumber.textContent = count;
     const countdownSound = document.getElementById("countdown-sound");
-    // Play the countdown sound immediately when the countdown starts.
+    // Play sound immediately on "3"
     if (countdownSound) {
       countdownSound.currentTime = 0;
       countdownSound.play();
@@ -184,10 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("wordGuess").disabled = false;
     document.getElementById("start-overlay").style.display = "none";
     document.getElementById("result-overlay").style.display = "none";
-    // Set grid container size.
-    const gridContainer = document.getElementById("grid-container");
-    gridContainer.style.width = diffConfig.containerSize + "px";
-    gridContainer.style.height = diffConfig.containerSize + "px";
+    setGridContainerSize(diffConfig.containerSize);
     document.getElementById("grid").style.setProperty("--grid-size", diffConfig.gridSize);
     let attempts = 0;
     do {
@@ -577,3 +585,4 @@ document.addEventListener("DOMContentLoaded", () => {
   window.checkWord = checkWord;
   window.startGame = startGame;
 });
+
