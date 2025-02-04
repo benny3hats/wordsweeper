@@ -24,31 +24,32 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Walkthrough steps for the How To Play guide.
-  // For steps 1-4, we include an image property (assumes files are in the "images" folder).
+  // Replace 'yourusername' and 'yourrepository' with your actual GitHub username and repository.
   const walkthroughSteps = [
     {
       title: "Welcome to Wordsweeper",
       content: "Your mission is to decipher the grid of letters and guess the secret word hidden within.",
-      image: "images/Step1.svg"
+      image: "https://raw.githubusercontent.com/benny3hats/wordsweeper/57327b6f20d89511e222f28050d3052c6b99efb5/Step1.svg"
+
     },
     {
       title: "The Grid & Tiles",
-      content: "Each tile shows a letter and a number. The number indicates how many of the eight surrounding tiles contain a letter from the secret word.",
-      image: "images/Step2.svg"
+      content: "Each tile shows a letter and a number. The number tells you how many of the eight surrounding tiles contain a letter from the secret word.",
+      image: "https://raw.githubusercontent.com/benny3hats/wordsweeper/57327b6f20d89511e222f28050d3052c6b99efb5/Step2.svg"
     },
     {
       title: "Marking Tiles",
-      content: "Right-click a tile to mark its letter red if you believe it is NOT in the secret word. Left-click a tile to mark it green if you believe it IS part of the secret word. On mobile, simply tap to mark green; press and hold to mark red.",
-      image: "images/Step3.svg"
+      content: "On desktop, left-click a tile to mark it green (likely in the secret word) and right-click to mark it red (likely not in the secret word). On mobile, tap to mark green; press and hold (about 500ms) to mark red.",
+      image: "https://raw.githubusercontent.com/benny3hats/wordsweeper/57327b6f20d89511e222f28050d3052c6b99efb5/Step3.svg"
     },
     {
       title: "Secret Word Display",
-      content: "Whenever you're ready, you can guess the secret word. After each guess, any letter in the correct position is revealed.",
-      image: "images/Step4.svg"
+      content: "The secret word is shown in a hangman-style display. Unrevealed letters appear as underscores. After each guess, any correct letters in the right position are revealed.",
+      image: "https://raw.githubusercontent.com/benny3hats/wordsweeper/57327b6f20d89511e222f28050d3052c6b99efb5/Step4.svg"
     },
     {
       title: "Game Rules",
-      content: "You have only 3 attempts to guess the secret word. Use the clues provided by the numbers on the tiles and your marked letters to deduce the word. And remember, time is ticking!"
+      content: "You have 3 attempts to guess the secret word. Use the clues provided by the numbers on the tiles and your marked letters to deduce the word. And remember, time is ticking!"
     },
     {
       title: "Ready to Play?",
@@ -222,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tileDiv.dataset.letter = tile.letter;
         tileDiv.innerHTML = `<span class="letter">${tile.letter}</span>
                              <span class="number">${tile.number}</span>`;
-        // For mobile: use touch events; for desktop: click and contextmenu.
+        // For mobile: use touch events; for desktop: use click and contextmenu.
         if ("ontouchstart" in window) {
           tileDiv.addEventListener("touchstart", onTileTouchStart);
           tileDiv.addEventListener("touchend", onTileTouchEnd);
@@ -263,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateSelectedLetters();
   }
 
-  // Mobile touch handlers.
+  // Mobile long-press / tap handlers.
   function onTileTouchStart(e) {
     if (gameOver) return;
     e.preventDefault();
@@ -341,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Show an overlay over the grid with win/lose message.
+  // Show an overlay with win/lose message.
   function showResultOverlay(status, messageText) {
     stopTimer();
     const overlay = document.getElementById("result-overlay");
