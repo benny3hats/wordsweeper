@@ -194,7 +194,7 @@ h1 {
   display: block;
   margin: 0 auto 10px auto;
   width: 100%;
-  max-width: 450px; /* Reduce this value to control the image size */
+  max-width: 455px; /* Reduce this value to control the image size */
   height: auto;
   object-fit: contain;
 }
