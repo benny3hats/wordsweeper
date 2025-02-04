@@ -1,17 +1,46 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Configuration object.
+  // Define difficulty settings.
+  const difficulties = {
+    easy: {
+      gridSize: 5,
+      wordLength: 5,
+      containerSize: 400, // in pixels
+      secretWords: [
+        "WORDS", "GAMES", "PLAYS", "HEROE", "TIMES", "LIFES", "WINDS", "STARS",
+        "LOVES", "FIRES", "SOULS", "BIRDS", "TREES", "WAVES", "NOTES", "BOOKS",
+        "RAINS", "HOPES", "GOLDS", "BLUES"
+      ]
+    },
+    medium: {
+      gridSize: 8,
+      wordLength: 6,
+      containerSize: 480,
+      secretWords: [
+        "TABLES", "CHAIRS", "PLANET", "WINDOW", "GARDEN", "FRIEND", "FAMILY", "DOCTOR",
+        "FLOWER", "MARKET", "BOTTLE", "CANDLE", "STREET", "SILVER", "ORANGE", "PURPLE",
+        "YELLOW", "WINTER", "SUMMER", "SPRING"
+      ]
+    },
+    hard: {
+      gridSize: 12,
+      wordLength: 8,
+      containerSize: 600,
+      secretWords: [
+        "ELEPHANT", "COMPUTER", "NOTEBOOK", "SCISSORS", "BICYCLES", "HOSPITAL", "BASEBALL", "TREASURE",
+        "MONSTERS", "MOUNTAIN", "SUNSHINE", "DIAMONDS", "SPACETIME", "DYNAMITE", "CROCODIL", "AIRPLANE",
+        "MAGNETIC", "CAMPFIRE", "MOONDUST", "SKYLINES"
+      ]
+    }
+  };
+
+  // Default difficulty is easy.
+  let currentDifficulty = "easy";
+
+  // Global configuration.
   const config = {
-    gridSize: 8,
     guessLimit: 3,
     clueDensityThreshold: 0.4,
     maxRegenerationAttempts: 10,
-    // 20 common six-letter words.
-    secretWords: [
-      "TABLES", "CHAIRS", "PLANTS", "FRIDGE", "WINDOW",
-      "CANDLE", "MARKET", "GARDEN", "FRIEND", "SISTER",
-      "FAMILY", "SCHOOL", "OFFICE", "DOCTOR", "ANIMAL",
-      "FLOWER", "PLANET", "BOTTLE", "RANDOM", "SPHERE"
-    ],
     letterFrequencies: {
       A: 8.17, B: 1.49, C: 2.78, D: 4.25, E: 12.70,
       F: 2.23, G: 2.02, H: 6.09, I: 6.97, J: 0.15,
@@ -23,14 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
     secretLetterFactor: 1.5
   };
 
-  // Walkthrough steps for the How To Play guide.
-  // Replace 'yourusername' and 'yourrepository' with your actual GitHub username and repository.
+  // Walkthrough steps.
   const walkthroughSteps = [
     {
       title: "Welcome to Wordsweeper",
       content: "Your mission is to decipher the grid of letters and guess the secret word hidden within.",
       image: "https://raw.githubusercontent.com/benny3hats/wordsweeper/57327b6f20d89511e222f28050d3052c6b99efb5/Step1.svg"
-
     },
     {
       title: "The Grid & Tiles",
@@ -39,12 +66,12 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     {
       title: "Marking Tiles",
-      content: "On desktop, left-click a tile to mark it green (likely in the secret word) and right-click to mark it red (likely not in the secret word). On mobile, tap to mark green; press and hold (about 500ms) to mark red.",
+      content: "Right-click a tile to mark its letter red if you believe it is NOT in the secret word. Left-click a tile to mark it green if you think it IS part of the secret word. On mobile, tap to mark green; press and hold to mark red.",
       image: "https://raw.githubusercontent.com/benny3hats/wordsweeper/57327b6f20d89511e222f28050d3052c6b99efb5/Step3.svg"
     },
     {
       title: "Secret Word Display",
-      content: "The secret word is shown in a hangman-style display. Unrevealed letters appear as underscores. After each guess, any correct letters in the right position are revealed.",
+      content: "At any point you can guess the secret word below. After each guess, any correct letters in the right position are revealed.",
       image: "https://raw.githubusercontent.com/benny3hats/wordsweeper/57327b6f20d89511e222f28050d3052c6b99efb5/Step4.svg"
     },
     {
@@ -53,11 +80,12 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     {
       title: "Ready to Play?",
-      content: "When you're ready, click 'Start Game' to begin your challenge. Good luck!"
+      content: "When you're ready, click 'Start Game' to begin your challenge. You can also change the difficulty using the selector above the grid. Good luck!"
     }
   ];
   let currentStep = 0;
 
+  // Game state variables.
   let grid = [];
   let deducedLetters = new Set();
   let eliminatedLetters = new Set();
@@ -69,11 +97,79 @@ document.addEventListener("DOMContentLoaded", () => {
   let secretWord = "";
   let revealedPositions = [];
 
-  // --------------------
-  // START / TIMER LOGIC
-  // --------------------
+  // Pre-load an easy grid on first load.
+  window.addEventListener("load", () => {
+    const diffConfig = difficulties["easy"];
+    const gridContainer = document.getElementById("grid-container");
+    gridContainer.style.width = diffConfig.containerSize + "px";
+    gridContainer.style.height = diffConfig.containerSize + "px";
+    document.getElementById("grid").style.setProperty("--grid-size", diffConfig.gridSize);
+    generateGrid(diffConfig.gridSize);
+  });
+
+  // Difficulty selector event.
+  const difficultySelect = document.getElementById("difficulty");
+  difficultySelect.addEventListener("change", (e) => {
+    currentDifficulty = e.target.value;
+    resetSecretWordDisplay();
+    startCountdown();
+  });
+
+  function resetSecretWordDisplay() {
+    const diffConfig = difficulties[currentDifficulty];
+    document.getElementById("secret-word-display").innerHTML =
+      `<strong>Secret Word:</strong> <span id="word-hangman">${"_ ".repeat(diffConfig.wordLength).trim()}</span>`;
+  }
+
+  // Check for at least one corner clue (0 or 3) in easy mode.
+  function easyCornerClueExists() {
+    if (currentDifficulty !== "easy") return true;
+    const gridSize = difficulties["easy"].gridSize;
+    const corners = [
+      grid[0][0],
+      grid[0][gridSize - 1],
+      grid[gridSize - 1][0],
+      grid[gridSize - 1][gridSize - 1]
+    ];
+    return corners.some(tile => tile.number === 0 || tile.number === 3);
+  }
+
+  // Countdown overlay logic.
+  function startCountdown() {
+    const countdownOverlay = document.getElementById("countdown-overlay");
+    const countdownNumber = document.getElementById("countdown-number");
+    countdownOverlay.style.display = "flex";
+    let count = 3;
+    countdownNumber.textContent = count;
+    const countdownSound = document.getElementById("countdown-sound");
+    // Play the countdown sound immediately when the countdown starts.
+    if (countdownSound) {
+      countdownSound.currentTime = 0;
+      countdownSound.play();
+    }
+    const interval = setInterval(() => {
+      count--;
+      if (count > 0) {
+        countdownNumber.textContent = count;
+        if (countdownSound) {
+          countdownSound.play();
+        }
+      } else {
+        countdownNumber.textContent = "GO!";
+        clearInterval(interval);
+        setTimeout(() => {
+          countdownOverlay.style.display = "none";
+          startGame();
+        }, 500);
+      }
+    }, 1000);
+  }
+
+  // Start game using current difficulty.
   function startGame() {
-    secretWord = config.secretWords[Math.floor(Math.random() * config.secretWords.length)];
+    const diffConfig = difficulties[currentDifficulty];
+    secretWord = diffConfig.secretWords[Math.floor(Math.random() * diffConfig.secretWords.length)];
+    secretWord = secretWord.substring(0, diffConfig.wordLength).toUpperCase();
     guessesRemaining = config.guessLimit;
     deducedLetters.clear();
     eliminatedLetters.clear();
@@ -88,7 +184,16 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("wordGuess").disabled = false;
     document.getElementById("start-overlay").style.display = "none";
     document.getElementById("result-overlay").style.display = "none";
-    generateGrid();
+    // Set grid container size.
+    const gridContainer = document.getElementById("grid-container");
+    gridContainer.style.width = diffConfig.containerSize + "px";
+    gridContainer.style.height = diffConfig.containerSize + "px";
+    document.getElementById("grid").style.setProperty("--grid-size", diffConfig.gridSize);
+    let attempts = 0;
+    do {
+      generateGrid(diffConfig.gridSize);
+      attempts++;
+    } while (!easyCornerClueExists() && currentDifficulty === "easy" && attempts < config.maxRegenerationAttempts);
     startTime = Date.now();
     timerInterval = setInterval(updateTimer, 1000);
   }
@@ -105,38 +210,39 @@ document.addEventListener("DOMContentLoaded", () => {
   // --------------------
   // GRID GENERATION LOGIC
   // --------------------
-  function generateGrid() {
+  function generateGrid(gridSize) {
     let attempts = 0;
     do {
-      grid = Array.from({ length: config.gridSize }, () => Array(config.gridSize).fill(""));
-      placeSecretWord();
-      fillRandomLetters();
-      assignNumbers();
+      grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(""));
+      placeSecretWord(gridSize);
+      fillRandomLetters(gridSize);
+      assignNumbers(gridSize);
       attempts++;
-    } while (!isGridBalanced() && attempts < config.maxRegenerationAttempts);
+    } while (!isGridBalanced(gridSize) && attempts < config.maxRegenerationAttempts);
     drawGrid();
   }
 
-  function placeSecretWord() {
+  function placeSecretWord(gridSize) {
+    const diffConfig = difficulties[currentDifficulty];
     const horizontal = Math.random() > 0.5;
     let startX, startY;
     if (horizontal) {
-      startX = Math.floor(Math.random() * (config.gridSize - secretWord.length));
-      startY = Math.floor(Math.random() * config.gridSize);
+      startX = Math.floor(Math.random() * (gridSize - diffConfig.wordLength));
+      startY = Math.floor(Math.random() * gridSize);
     } else {
-      startX = Math.floor(Math.random() * config.gridSize);
-      startY = Math.floor(Math.random() * (config.gridSize - secretWord.length));
+      startX = Math.floor(Math.random() * gridSize);
+      startY = Math.floor(Math.random() * (gridSize - diffConfig.wordLength));
     }
-    for (let i = 0; i < secretWord.length; i++) {
+    for (let i = 0; i < diffConfig.wordLength; i++) {
       const x = horizontal ? startX + i : startX;
       const y = horizontal ? startY : startY + i;
       grid[y][x] = secretWord[i];
     }
   }
 
-  function fillRandomLetters() {
-    for (let y = 0; y < config.gridSize; y++) {
-      for (let x = 0; x < config.gridSize; x++) {
+  function fillRandomLetters(gridSize) {
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
         if (!grid[y][x]) {
           let possibleLetters = [];
           for (let i = 0; i < 26; i++) {
@@ -144,7 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (secretWord.includes(letter)) {
               possibleLetters.push(letter);
             } else {
-              if (!getAdjacentTiles(x, y).includes(letter)) {
+              if (!getAdjacentTiles(x, y, gridSize).includes(letter)) {
                 possibleLetters.push(letter);
               }
             }
@@ -174,24 +280,24 @@ document.addEventListener("DOMContentLoaded", () => {
     return options[0];
   }
 
-  function assignNumbers() {
-    for (let y = 0; y < config.gridSize; y++) {
-      for (let x = 0; x < config.gridSize; x++) {
-        const adjacent = getAdjacentTiles(x, y);
+  function assignNumbers(gridSize) {
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
+        const adjacent = getAdjacentTiles(x, y, gridSize);
         const count = adjacent.filter(letter => secretWord.includes(letter)).length;
         grid[y][x] = { letter: grid[y][x], number: count };
       }
     }
   }
 
-  function getAdjacentTiles(x, y) {
+  function getAdjacentTiles(x, y, gridSize) {
     const adjacent = [];
     for (let dx = -1; dx <= 1; dx++) {
       for (let dy = -1; dy <= 1; dy++) {
         if (dx === 0 && dy === 0) continue;
         const newX = x + dx;
         const newY = y + dy;
-        if (newX >= 0 && newX < config.gridSize && newY >= 0 && newY < config.gridSize) {
+        if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) {
           const cell = grid[newY][newX];
           adjacent.push(cell.letter ? cell.letter : cell);
         }
@@ -200,30 +306,30 @@ document.addEventListener("DOMContentLoaded", () => {
     return adjacent;
   }
 
-  function isGridBalanced() {
+  function isGridBalanced(gridSize) {
     let nonZeroCount = 0;
-    for (let y = 0; y < config.gridSize; y++) {
-      for (let x = 0; x < config.gridSize; x++) {
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
         if (grid[y][x].number > 0) nonZeroCount++;
       }
     }
-    return nonZeroCount >= config.gridSize * config.gridSize * config.clueDensityThreshold;
+    return nonZeroCount >= gridSize * gridSize * config.clueDensityThreshold;
   }
 
   function drawGrid() {
     const gridContainer = document.getElementById("grid");
     gridContainer.innerHTML = "";
-    for (let y = 0; y < config.gridSize; y++) {
-      for (let x = 0; x < config.gridSize; x++) {
+    const diffConfig = difficulties[currentDifficulty];
+    for (let y = 0; y < diffConfig.gridSize; y++) {
+      for (let x = 0; x < diffConfig.gridSize; x++) {
         const tile = grid[y][x];
         const tileDiv = document.createElement("div");
         tileDiv.classList.add("tile");
         tileDiv.dataset.x = x;
         tileDiv.dataset.y = y;
         tileDiv.dataset.letter = tile.letter;
-        tileDiv.innerHTML = `<span class="letter">${tile.letter}</span>
-                             <span class="number">${tile.number}</span>`;
-        // For mobile: use touch events; for desktop: use click and contextmenu.
+        tileDiv.innerHTML = `<span class="letter">${tile.letter || ""}</span>
+                             <span class="number">${tile.number !== undefined ? tile.number : ""}</span>`;
         if ("ontouchstart" in window) {
           tileDiv.addEventListener("touchstart", onTileTouchStart);
           tileDiv.addEventListener("touchend", onTileTouchEnd);
@@ -264,7 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateSelectedLetters();
   }
 
-  // Mobile long-press / tap handlers.
+  // Mobile event handlers.
   function onTileTouchStart(e) {
     if (gameOver) return;
     e.preventDefault();
@@ -342,24 +448,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Show an overlay with win/lose message.
   function showResultOverlay(status, messageText) {
     stopTimer();
     const overlay = document.getElementById("result-overlay");
     overlay.style.display = "flex";
     overlay.className = "result-overlay " + status;
+    if (status === "win") {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      messageText += " Your time: " + elapsed + " seconds.";
+    }
     document.getElementById("result-message").textContent = messageText;
   }
 
-  // --------------------
-  // WORD GUESS LOGIC
-  // --------------------
   function checkWord() {
     if (gameOver) return;
     const guessInput = document.getElementById("wordGuess");
     const guess = guessInput.value.trim().toUpperCase();
-    if (guess.length !== secretWord.length) {
-      document.getElementById("message").textContent = "Word must be " + secretWord.length + " letters long.";
+    const diffConfig = difficulties[currentDifficulty];
+    if (guess.length !== diffConfig.wordLength) {
+      document.getElementById("message").textContent = "Word must be " + diffConfig.wordLength + " letters long.";
       return;
     }
     if (guess === secretWord) {
@@ -394,9 +501,7 @@ document.addEventListener("DOMContentLoaded", () => {
     guessInput.value = "";
   }
 
-  // --------------------
-  // WALKTHROUGH GUIDE LOGIC
-  // --------------------
+  // Walkthrough guide logic.
   function showGuideStep() {
     const guideContent = document.getElementById("guide-content");
     const step = walkthroughSteps[currentStep];
@@ -452,24 +557,21 @@ document.addEventListener("DOMContentLoaded", () => {
   guideStartButton.addEventListener("click", () => {
     guideContainer.style.display = "none";
     document.getElementById("start-overlay").style.display = "none";
-    startGame();
+    startCountdown();
   });
 
-  // --------------------
-  // INITIAL EVENT LISTENERS
-  // --------------------
-  document.getElementById("start-button").addEventListener("click", startGame);
+  document.getElementById("start-button").addEventListener("click", startCountdown);
   document.getElementById("new-game-button").addEventListener("click", () => {
     document.getElementById("start-overlay").style.display = "flex";
     overlayDefault.style.display = "block";
     guideContainer.style.display = "none";
-    startGame();
+    startCountdown();
   });
   document.getElementById("overlay-new-game-button").addEventListener("click", () => {
     document.getElementById("result-overlay").style.display = "none";
     document.getElementById("start-overlay").style.display = "flex";
     overlayDefault.style.display = "block";
-    startGame();
+    startCountdown();
   });
 
   window.checkWord = checkWord;
