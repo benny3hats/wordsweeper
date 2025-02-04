@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     guessLimit: 3,
     clueDensityThreshold: 0.4,
     maxRegenerationAttempts: 10,
-    // 20 common six-letter words.
     secretWords: [
       "TABLES", "CHAIRS", "PLANTS", "FRIDGE", "WINDOW",
       "CANDLE", "MARKET", "GARDEN", "FRIEND", "SISTER",
@@ -24,13 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Walkthrough steps for the How To Play guide.
-  // Replace 'yourusername' and 'yourrepository' with your actual GitHub username and repository.
+  // Replace with your raw GitHub URLs.
   const walkthroughSteps = [
     {
       title: "Welcome to Wordsweeper",
       content: "Your mission is to decipher the grid of letters and guess the secret word hidden within.",
       image: "https://raw.githubusercontent.com/benny3hats/wordsweeper/57327b6f20d89511e222f28050d3052c6b99efb5/Step1.svg"
-
     },
     {
       title: "The Grid & Tiles",
@@ -39,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     {
       title: "Marking Tiles",
-      content: "On desktop, left-click a tile to mark it green (likely in the secret word) and right-click to mark it red (likely not in the secret word). On mobile, tap to mark green; press and hold (about 500ms) to mark red.",
+      content: "Right-click a tile to mark its letter red if you believe it is NOT in the secret word. Left-click a tile to mark it green if you think it IS part of the secret word. On mobile, tap to mark green; press and hold to mark red.",
       image: "https://raw.githubusercontent.com/benny3hats/wordsweeper/57327b6f20d89511e222f28050d3052c6b99efb5/Step3.svg"
     },
     {
@@ -342,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Show an overlay with win/lose message.
+  // Show an overlay over the grid with win/lose message.
   function showResultOverlay(status, messageText) {
     stopTimer();
     const overlay = document.getElementById("result-overlay");
