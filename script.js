@@ -39,17 +39,17 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     {
       title: "Marking Tiles",
-      content: "On desktop, left-click a tile to mark it green (likely in the secret word) and right-click to mark it red (likely not in the secret word). On mobile, tap to mark green; press and hold (about 500ms) to mark red.",
+      content: "Right-click a tile to mark its letter red if you believe it is NOT in the secret word. Left-click a tile to mark it green if you think it IS part of the secret word. On mobile, tap to mark green; press and hold to mark red.",
       image: "https://raw.githubusercontent.com/benny3hats/wordsweeper/57327b6f20d89511e222f28050d3052c6b99efb5/Step3.svg"
     },
     {
       title: "Secret Word Display",
-      content: "The secret word is shown in a hangman-style display. Unrevealed letters appear as underscores. After each guess, any correct letters in the right position are revealed.",
+      content: "When your ready, you can guess what the secret word is below. After each guess, any correct letters in the right position are revealed.",
       image: "https://raw.githubusercontent.com/benny3hats/wordsweeper/57327b6f20d89511e222f28050d3052c6b99efb5/Step4.svg"
     },
     {
       title: "Game Rules",
-      content: "You have 3 attempts to guess the secret word. Use the clues provided by the numbers on the tiles and your marked letters to deduce the word. And remember, time is ticking!"
+      content: "You only have 3 attempts to guess the secret word. Use the clues provided by the numbers on the tiles and your marked letters to deduce the word. And remember, time is ticking!"
     },
     {
       title: "Ready to Play?",
