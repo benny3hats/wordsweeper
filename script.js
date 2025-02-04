@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Define difficulty settings.
+  // Difficulty settings.
   const difficulties = {
     easy: {
       gridSize: 5,
       wordLength: 5,
-      containerSize: 400, // ideal size (in pixels) for desktop; will scale on mobile
+      containerSize: 400,
       secretWords: [
         "WORDS", "GAMES", "PLAYS", "HEROE", "TIMES", "LIFES", "WINDS", "STARS",
         "LOVES", "FIRES", "SOULS", "BIRDS", "TREES", "WAVES", "NOTES", "BOOKS",
@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Default difficulty is easy.
   let currentDifficulty = "easy";
 
   // Global configuration.
@@ -85,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
   let currentStep = 0;
 
-  // Game state variables.
+  // Game state.
   let grid = [];
   let deducedLetters = new Set();
   let eliminatedLetters = new Set();
@@ -106,11 +105,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Set grid container size responsively.
-  function setGridContainerSize(containerSize) {
+  function setGridContainerSize(idealSize) {
     const gridContainer = document.getElementById("grid-container");
-    // If the viewport is smaller than the ideal containerSize, use 90% of viewport width.
     const viewportWidth = window.innerWidth;
-    const size = viewportWidth < containerSize ? viewportWidth * 0.9 : containerSize;
+    let size;
+    if (viewportWidth < 600) {
+      size = viewportWidth * 0.9; // use 90vw on mobile
+    } else {
+      size = idealSize;
+    }
     gridContainer.style.width = size + "px";
     gridContainer.style.height = size + "px";
   }
@@ -129,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
       `<strong>Secret Word:</strong> <span id="word-hangman">${"_ ".repeat(diffConfig.wordLength).trim()}</span>`;
   }
 
-  // In Easy mode, ensure at least one corner tile has a clue of 0 or 3.
+  // In easy mode, ensure at least one corner has a clue of 0 or 3.
   function easyCornerClueExists() {
     if (currentDifficulty !== "easy") return true;
     const gridSize = difficulties["easy"].gridSize;
@@ -142,10 +145,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return corners.some(tile => tile.number === 0 || tile.number === 3);
   }
 
-  // Countdown overlay logic.
+  // Countdown overlay.
   function startCountdown() {
     const diffConfig = difficulties[currentDifficulty];
-    // Set grid container size responsively.
     setGridContainerSize(diffConfig.containerSize);
     const countdownOverlay = document.getElementById("countdown-overlay");
     const countdownNumber = document.getElementById("countdown-number");
@@ -153,7 +155,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let count = 3;
     countdownNumber.textContent = count;
     const countdownSound = document.getElementById("countdown-sound");
-    // Play sound immediately on "3"
     if (countdownSound) {
       countdownSound.currentTime = 0;
       countdownSound.play();
@@ -176,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   }
 
-  // Start game using current difficulty.
+  // Start game.
   function startGame() {
     const diffConfig = difficulties[currentDifficulty];
     secretWord = diffConfig.secretWords[Math.floor(Math.random() * diffConfig.secretWords.length)];
@@ -197,6 +198,13 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("result-overlay").style.display = "none";
     setGridContainerSize(diffConfig.containerSize);
     document.getElementById("grid").style.setProperty("--grid-size", diffConfig.gridSize);
+    // If Hard and on mobile, add a special class.
+    const gridContainer = document.getElementById("grid-container");
+    if (currentDifficulty === "hard" && window.innerWidth < 600) {
+      gridContainer.classList.add("hard-mobile");
+    } else {
+      gridContainer.classList.remove("hard-mobile");
+    }
     let attempts = 0;
     do {
       generateGrid(diffConfig.gridSize);
@@ -215,9 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clearInterval(timerInterval);
   }
 
-  // --------------------
-  // GRID GENERATION LOGIC
-  // --------------------
+  // Grid generation.
   function generateGrid(gridSize) {
     let attempts = 0;
     do {
@@ -585,4 +591,5 @@ document.addEventListener("DOMContentLoaded", () => {
   window.checkWord = checkWord;
   window.startGame = startGame;
 });
+
 
