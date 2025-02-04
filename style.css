@@ -1,11 +1,11 @@
-/* Reset defaults */
+/* Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Light, spacious design */
+/* Overall design */
 body {
   background-color: #f0f2f5;
   font-family: Arial, sans-serif;
@@ -19,16 +19,16 @@ body {
   padding: 20px;
 }
 
-/* Title styling */
+/* Title */
 h1 {
   font-size: 28px;
   margin-bottom: 20px;
   letter-spacing: 2px;
 }
 
-/* Game container with clean, modern styling */
+/* Game container */
 #game-container {
-  background: #ffffff;
+  background: #fff;
   padding: 20px;
   border: 3px solid #ccc;
   border-radius: 8px;
@@ -36,36 +36,68 @@ h1 {
   margin: 0 auto 20px auto;
 }
 
-/* Timer display inside game container, centered above grid */
-#timer-display {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  text-align: center;
+/* Header controls: Timer left, instructions right */
+#header-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0 10px;
 }
 
-/* Grid container with overlay */
+#timer-display {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+}
+
+#instructions-header {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Grid container – size set dynamically via JS based on difficulty */
 #grid-container {
   position: relative;
-  margin-bottom: 20px;
+  margin: 0 auto 20px auto;
   background: #eaeaea;
-  padding: 15px;
   border: 2px solid #ccc;
   border-radius: 8px;
-  width: 100%;
-  max-width: 100%;
+  padding: 10px;
+  /* The container's width and height are set in JS */
 }
 
 /* Grid styling */
 #grid {
+  width: 100%;
+  height: 100%;
   display: grid;
-  grid-template-columns: repeat(8, 60px);
-  grid-template-rows: repeat(8, 60px);
-  gap: 10px;
-  justify-content: center;
+  grid-template-columns: repeat(var(--grid-size), 1fr);
+  grid-template-rows: repeat(var(--grid-size), 1fr);
+  gap: 5px;
 }
 
-/* Start overlay covering grid */
+/* Countdown overlay */
+#countdown-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+}
+
+#countdown-number {
+  font-size: 48px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Start overlay */
 #start-overlay {
   position: absolute;
   top: 0;
@@ -81,7 +113,6 @@ h1 {
   z-index: 20;
 }
 
-/* Default overlay content */
 #overlay-default {
   text-align: center;
 }
@@ -120,7 +151,7 @@ h1 {
   border-color: #1e8c4d;
 }
 
-/* Result overlay for win/lose messages */
+/* Result overlay */
 #result-overlay {
   position: absolute;
   top: 0;
@@ -165,7 +196,7 @@ h1 {
   color: #fff;
 }
 
-/* Guide container styling */
+/* Guide container */
 #guide-container {
   background: #fff;
   border: 2px solid #333;
@@ -189,12 +220,12 @@ h1 {
   font-size: 14px;
 }
 
-/* Guide image styling – constrain images so they don’t exceed 150px (adjust as needed) */
+/* Guide image – force maximum width of 150px */
 .guide-image {
   display: block;
   margin: 0 auto 10px auto;
   width: 100%;
-  max-width: 450px; /* Reduce this value to control the image size */
+  max-width: 450px;
   height: auto;
   object-fit: contain;
 }
@@ -232,7 +263,7 @@ h1 {
   border-color: #1e8c4d;
 }
 
-/* Info panel aligned left */
+/* Info panel */
 #info-panel {
   text-align: left;
   max-width: 400px;
@@ -240,24 +271,32 @@ h1 {
   font-size: 14px;
 }
 
+#difficulty-selector {
+  margin-bottom: 10px;
+}
+
+#difficulty-selector label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
 #info-panel div {
   margin-bottom: 10px;
 }
 
-/* Secret word display styling */
 #secret-word-display {
   font-size: 16px;
   margin-bottom: 10px;
 }
 
-/* Wrong guesses styling */
+/* Wrong guesses */
 .wrong {
   text-decoration: line-through;
   color: #e74c3c;
   margin-right: 5px;
 }
 
-/* Guess area styling */
+/* Guess area */
 #guess-area {
   margin-top: 10px;
 }
@@ -289,7 +328,6 @@ h1 {
   color: #fff;
 }
 
-/* New Game button styling (info panel) */
 #new-game-button {
   margin-top: 15px;
   padding: 8px 16px;
@@ -307,23 +345,25 @@ h1 {
   color: #fff;
 }
 
-/* Message styling */
 #message {
   margin-top: 20px;
   font-size: 16px;
   color: #333;
 }
 
-/* Tile styling */
+/* Tile styling – tiles fill their grid cells and maintain a square aspect ratio */
 .tile {
-  width: 60px;
-  height: 60px;
   background: #fff;
   border: 2px solid #ccc;
   border-radius: 4px;
   position: relative;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tile:hover {
@@ -335,9 +375,6 @@ h1 {
 .tile .letter {
   font-size: 18px;
   font-weight: bold;
-  line-height: 60px;
-  text-align: center;
-  display: block;
   color: #333;
 }
 
@@ -361,29 +398,15 @@ h1 {
   border-color: #ff8b94;
 }
 
-/* Mobile responsiveness */
+/* Mobile adjustments */
 @media (max-width: 480px) {
   #game-container {
     padding: 10px;
   }
   #grid-container {
+    width: 90%;
+    height: auto;
     padding: 10px;
-  }
-  #grid {
-    grid-template-columns: repeat(8, 35px);
-    grid-template-rows: repeat(8, 35px);
-    gap: 5px;
-  }
-  .tile {
-    width: 35px;
-    height: 35px;
-  }
-  .tile .letter {
-    font-size: 14px;
-    line-height: 35px;
-  }
-  .tile .number {
-    font-size: 8px;
   }
   #timer-display, #info-panel {
     font-size: 12px;
